@@ -1,0 +1,26 @@
+{
+  "name": "progect",
+  "version": "0.0.0",
+  "description": "",
+  "homepage": "https://github.com/masochnik010/mask#readme",
+  "bugs": {
+    "url": "https://github.com/masochnik010/mask/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/masochnik010/mask.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@stylistic/eslint-plugin": "^5.10.0",
+    "eslint": "^10.2.1",
+    "eslint-config-frontend": "^1.0.12"
+  }
+}
