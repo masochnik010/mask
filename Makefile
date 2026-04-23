@@ -5,6 +5,7 @@ lint:
 lint--fix:
 	npx eslint . --fix
 git:
-	git add .
-	git commit -m '1'
-	git push --set-upstream origin main
+	@read -p "комит name " msg; \
+	git add .; \
+	git commit -m "$$msg"; \
+	git push --set-upstream origin main;

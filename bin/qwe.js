@@ -1,6 +1,6 @@
 
 // Данные и Базы
-const user    = require('../src/logica/user.js');
+const user    = require('../src/logica/user.js'); //пользователи 
 const vrag    = require('../src/logica/vrag.js');   // Враги
 const locau   = require('../src/logica/locau.js');  // Локации
 const brow    = require('../src/logica/brow.js');
