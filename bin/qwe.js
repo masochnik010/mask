@@ -3,6 +3,7 @@
 const user    = require('../src/logica/user.js');
 const vrag    = require('../src/logica/vrag.js');   // Враги
 const locau   = require('../src/logica/locau.js');  // Локации
+const brow    = require('../src/logica/brow.js');
 
 // Механики и Логика
 const yron    = require('../src/logica/yron.js');   // Урон
@@ -16,6 +17,7 @@ const engine  = require('../src/logica/index.js');
 
 // ЗАПУСК
 engine.start({
+    brow,
     user,
     vrag,
     locau,
