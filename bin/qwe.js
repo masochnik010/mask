@@ -1,20 +1,27 @@
 
-const user    = require('./src/logica/user.js');
-const vrag    = require('./src/logica/vrag.js');
-const locau   = require('./src/logica/locau.js');
-const neredv  = require('./src/logica/neredv.js');
-const nrount  = require('./src/logica/nrount.js');
-const yron    = require('./src/logica/yron.js');
-const saveSys = require('./save.js'); 
+// Данные и Базы
+const user    = require('../src/logica/user.js');
+const vrag    = require('../src/logica/vrag.js');   // Враги
+const locau   = require('../src/logica/locau.js');  // Локации
 
-const engine  = require('./src/logica/index.js');
+// Механики и Логика
+const yron    = require('../src/logica/yron.js');   // Урон
+const lvl     = require('../src/logica/lvl.js');    // Уровни
+const nrount  = require('../src/logica/nrount.js'); // Шансы %
+const neredv  = require('../src/logica/neredv.js'); // Движение
+const saveSys = require('./save.js');               // Сохранение
 
-engine.run({
-    saveSys,
+// Главный движок
+const engine  = require('../src/logica/index.js');
+
+// ЗАПУСК
+engine.start({
     user,
     vrag,
     locau,
-    neredv,
+    yron,
+    lvl,
     nrount,
-    yron
+    neredv,
+    saveSys
 });
