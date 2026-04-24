@@ -22,5 +22,8 @@
     "@stylistic/eslint-plugin": "^5.10.0",
     "eslint": "^10.2.1",
     "eslint-config-frontend": "^1.0.12"
+  },
+  "dependencies": {
+    "make": "^0.8.1"
   }
 }

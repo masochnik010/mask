@@ -1,5 +1,5 @@
 const engine = {
-  start: function(systems) {
+  start: function (systems) {
     const { user, vrag, locau, yron, nrount, saveSys } = systems;
     console.log("Движок запущен. Мир загружен. Веселье начинается.");
 
