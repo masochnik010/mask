@@ -8,8 +8,8 @@ git:
 	@read -p "комит name: " msg; \
 	read -p "patch или minor или major: " mmm; \
 	git add .; \
-	npm version $$mmm; \
 	git commit -m "$$msg"; \
-	git push --set-upstream origin main
+	npm version $$mmm; \
+	git push origin main --follow-tags
 clon:
 	git pull origin main
