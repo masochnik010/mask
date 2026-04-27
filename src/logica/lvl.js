@@ -11,4 +11,3 @@ function lvl(xp, lvlUser) {
   const qwe = [lvlup, xpUpLimit];
   return qwe.flat();
 }
-console.log(lvl(10, 1));
