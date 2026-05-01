@@ -16,8 +16,6 @@ const user = {
   slot8: "null",
   slot9: "null",
 };
-//это на подобии импорта 
+//это на подобии импорта
 //(не зыбыть добавить в другие js)
-if (typeof module !== 'undefined') {
-    module.exports = user;
-}
+if (typeof module !== "undefined") module.exports = user;
