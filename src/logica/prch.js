@@ -8,11 +8,11 @@ const prch = {
     return Math.round(q);
   },
   Num1_100: function() {
-    const q = Math.random() * (1 - 100) + 1;
+    const q = Math.random() * 100 + 1;
     return Math.round(q);
   },
   Num1_1000: function() {
-    const q = Math.random() * (1 - 1000) + 1;
+    const q = Math.random() * 1000 + 1;
     return Math.round(q);
   },
 };
