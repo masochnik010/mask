@@ -16,5 +16,4 @@ const prch = {
     return Math.round(q);
   },
 };
-console.log(prch.Num1_10());
 if (typeof module !== "undefined") module.exports = prch;

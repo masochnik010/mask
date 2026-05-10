@@ -15,6 +15,7 @@ const user = {
   slot7: "null",
   slot8: "null",
   slot9: "null",
+  loc: "centre",
 };
 //это на подобии импорта
 //(не зыбыть добавить в другие js)
