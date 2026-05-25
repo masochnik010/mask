@@ -24,6 +24,7 @@
     "eslint-config-frontend": "^1.0.12"
   },
   "dependencies": {
-    "make": "^0.8.1"
+    "make": "^0.8.1",
+    "prompt-sync": "^4.2.0"
   }
 }

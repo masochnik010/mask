@@ -1,10 +1,12 @@
 const user = {
+  neme: "null",
   hp: 100,
   mana: 100,
   crit: 20, //20%
   xp: 0,
   lvl: 1,
   acvip: "null",
+  acvip2: "null",
   arrmor: "null",
   slot1: "null",
   slot2: "null",
@@ -16,6 +18,7 @@ const user = {
   slot8: "null",
   slot9: "null",
   loc: "centre",
+  mani: 0,
 };
 //это на подобии импорта
 //(не зыбыть добавить в другие js)

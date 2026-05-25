@@ -4,6 +4,7 @@ const vrag = require("../src/logica/vrag.js"); // Враги
 const loc = require("../src/logica/loc.js"); // Локации
 const brow = require("../src/logica/brow.js"); // Браузер
 const nps = require("../src/logica/nps.js"); // нпс
+const lyt = require("../src/logica/lyt.js"); //броня и оружие
 
 // Механики и Логика
 const yron = require("../src/logica/yron.js"); // Урон
@@ -13,7 +14,7 @@ const nav = require("../src/logica/nav.js"); // Движение
 const saveSys = require("./save.js"); // Сохранение
 
 // Главный движок
-const engine = require("../src/logica/index.js");
+const engine = require("../src/index.js");
 
 // ЗАПУСК
 engine.start({
@@ -27,4 +28,5 @@ engine.start({
   prch,
   nav,
   saveSys,
+  lyt,
 });
