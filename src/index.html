@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Текстовая RPG</title>
+  <style>
+    /* Базовые простые стили для разметки экрана */
+    body {
+      background-color: #1a1a1a;
+      color: #ffffff;
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      padding: 0;
+    }
+
+    /* Главный контейнер игры */
+    .game-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 2fr 1fr; /* Слева шире, справа уже */
+      grid-template-rows: auto 1fr auto; /* Сверху враг, в центре контент, снизу сейв */
+      gap: 15px;
+    }
+
+    /* Блок врага (Сверху) */
+    .enemy-panel {
+      grid-column: 1 / 3; /* Растянут на всю ширину */
+      background-color: #2d1a1a;
+      border: 2px solid #5a2a2a;
+      padding: 15px;
+      text-align: center;
+      font-size: 18px;
+    }
+
+    /* Блок локации (Слева в центре) */
+    .location-panel {
+      background-color: #222;
+      border: 2px solid #444;
+      padding: 20px;
+      min-height: 300px;
+    }
+
+    /* Блок характеристик и инвентаря (Справа в центре) */
+    .side-panel {
+      background-color: #222;
+      border: 2px solid #444;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .stats-block, .inventory-block {
+      background-color: #2d2d2d;
+      padding: 10px;
+      border-radius: 4px;
+    }
+
+    .inventory-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr); /* Сетка 3х3 для slot1-slot9 */
+      gap: 5px;
+      margin-top: 10px;
+    }
+
+    .inv-cell {
+      background-color: #3a3a3a;
+      border: 1px solid #555;
+      height: 50px;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2px;
+    }
+
+    /* Блок ввода и кнопки сохранения (Снизу) */
+    .bottom-panel {
+      grid-column: 1 / 3; /* На всю ширину */
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background-color: #222;
+      padding: 15px;
+      border: 2px solid #444;
+    }
+
+    .console-input {
+      width: 100%;
+      background-color: #000;
+      color: #00ff00;
+      border: 1px solid #444;
+      padding: 10px;
+      font-family: 'Courier New', monospace;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+
+    .save-btn {
+      background-color: #2a5a2a;
+      color: white;
+      border: none;
+      padding: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .save-btn:hover {
+      background-color: #3a7a3a;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="game-container">
+    
+    <!-- ЭКРАН СТАРТОВОГО МЕНЮ (Управление слотами при запуске) -->
+    <div id="main-menu-screen" style="grid-column: 1 / 3; background-color: #222; border: 2px solid #444; padding: 30px; text-align: center; border-radius: 6px;">
+      <h1 style="color: #00ff00; margin-bottom: 20px;">ГЛАВНОЕ МЕНЮ ТЕКСТОВОЙ RPG</h1>
+      <p style="color: #aaa; margin-bottom: 30px;">Выберите слот для загрузки профиля персонажа или перезаписи новой игры:</p>
+      
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 800px; margin: 0 auto 30px auto;">
+        <!-- Слот 1 -->
+        <div style="background-color: #2d2d2d; padding: 15px; border: 1px solid #555; border-radius: 4px;">
+          <h3>Слот 1</h3>
+          <p id="menu-slot1-status" style="color: #00ff00; font-weight: bold;">Пусто</p>
+          <button class="save-btn" id="btn-load-1" style="margin-bottom: 5px;">Загрузить</button>
+          <button class="save-btn" id="btn-new-1" style="background-color: #5a2a2a;">Новая игра</button>
+        </div>
+        <!-- Слот 2 -->
+        <div style="background-color: #2d2d2d; padding: 15px; border: 1px solid #555; border-radius: 4px;">
+          <h3>Слот 2</h3>
+          <p id="menu-slot2-status" style="color: #00ff00; font-weight: bold;">Пусто</p>
+          <button class="save-btn" id="btn-load-2" style="margin-bottom: 5px;">Загрузить</button>
+          <button class="save-btn" id="btn-new-2" style="background-color: #5a2a2a;">Новая игра</button>
+        </div>
+        <!-- Слот 3 -->
+        <div style="background-color: #2d2d2d; padding: 15px; border: 1px solid #555; border-radius: 4px;">
+          <h3>Слот 3</h3>
+          <p id="menu-slot3-status" style="color: #00ff00; font-weight: bold;">Пусто</p>
+          <button class="save-btn" id="btn-load-3" style="margin-bottom: 5px;">Загрузить</button>
+          <button class="save-btn" id="btn-new-3" style="background-color: #5a2a2a;">Новая игра</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ОСНОВНОЙ ИГРОВОЙ ИНТЕРФЕЙС (Переключается через brow.js) -->
+    <div id="game-play-screens" style="display: contents;">
+      <!-- СВЕРХУ: Информация о враге -->
+      <div class="enemy-panel">
+        <strong>Враг:</strong> <span id="enemy-info">пусто</span>
+      </div>
+
+      <!-- СЛЕВА: Локация и информация -->
+      <div class="location-panel">
+        <h2 id="loc-name">Загрузка локации...</h2>
+        <p id="loc-opis">Здесь будет описание текущей комнаты игрового мира.</p>
+        <hr>
+        <div id="loc-info">Дополнительная информация о жителях и предметах локации.</div>
+      </div>
+
+      <!-- СПРАВА: Характеристики и Инвентарь игрока -->
+      <div class="side-panel">
+        <!-- Блок характеристик -->
+        <div class="stats-block">
+          <h3>Характеристики</h3>
+          <p style="color: #ffd700; font-weight: bold; border-bottom: 1px solid #444; padding-bottom: 5px; margin-bottom: 10px;">
+            Имя: <span id="user-display-name">Без имени</span>
+          </p>
+          <p>HP: <span id="user-hp">100</span></p>
+          <p>Мана: <span id="user-mana">100</span></p>
+          <p>Уровень: <span id="user-lvl">1</span></p>
+          <p>Опыт: <span id="user-xp">0</span></p>
+        </div>
+
+        <!-- Блок инвентаря -->
+        <div class="inventory-block">
+          <h3>Инвентарь</h3>
+          <p style="background-color: #3a3a1a; padding: 5px; border-radius: 4px; border: 1px solid #7a7a2a; text-align: center; font-weight: bold; margin-bottom: 10px;">
+            Золото: <span id="user-gold" style="color: #ffd700;">10</span>
+          </p>
+          <div class="inventory-grid">
+            <div class="inv-cell" id="slot1">Пусто</div>
+            <div class="inv-cell" id="slot2">Пусто</div>
+            <div class="inv-cell" id="slot3">Пусто</div>
+            <div class="inv-cell" id="slot4">Пусто</div>
+            <div class="inv-cell" id="slot5">Пусто</div>
+            <div class="inv-cell" id="slot6">Пусто</div>
+            <div class="inv-cell" id="slot7">Пусто</div>
+            <div class="inv-cell" id="slot8">Пусто</div>
+            <div class="inv-cell" id="slot9">Пусто</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- СНИЗУ: Панель ввода внутри игрового экрана -->
+      <div class="bottom-panel">
+        <input type="text" class="console-input" id="player-input" placeholder="Введите команду (например: север, атака)..." autofocus>
+        <div style="display: flex; gap: 10px; width: 100%;">
+          <button class="save-btn" id="fight-button" style="background-color: #5a2a2a; flex: 1;">Начать бой</button>
+          <button class="save-btn" id="save-button" style="background-color: #2a5a2a; flex: 2;">Сохранить игру (Быстрый сейв в текущий слот)</button>
+        </div>
+        <button class="save-btn" id="menu-back-button" style="background-color: #444;">Выйти в главное меню</button>
+      </div>
+
+    </div> <!-- Конец игрового экрана -->
+
+  </div> <!-- Конец контейнера -->
+
+  <!-- ПОДКЛЮЧЕНИЕ СКРИПТОВ С УЧЕТОМ ВАШЕЙ СТРУКТУРЫ (Индекс html лежит в папке src/) -->
+  <script src="logica/user.js"></script>
+  <script src="logica/loc.js"></script>
+  <script src="logica/vrag.js"></script>
+  <script src="logica/nps.js"></script>
+  <script src="logica/lyt.js"></script>
+  <script src="logica/nav.js"></script>
+  <script src="logica/yron.js"></script>
+  <script src="logica/lvl.js"></script>
+  <script src="logica/prch.js"></script>
+  <script src="index.js"></script>
+  <script src="logica/brow.js"></script>
+
+</body>
+</html>
