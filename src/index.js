@@ -438,7 +438,6 @@ const engine = {
         engine.activeCombat = null;
         return "Вы успешно убежали обратно в безопасную зону!";
       }
-
       // При неудачном побеге монстр бьет беззащитного игрока (учитываем лвл защиту)
       let currentDef = 0;
       if (sys.user.arrmor !== "null" && sys.lyt.armor[sys.user.arrmor]) {

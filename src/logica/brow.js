@@ -71,17 +71,17 @@ document.addEventListener("DOMContentLoaded", function() {
       // Окно выбора имени при старте Новой игры
       const playerName = prompt("Введите имя вашего героя:", "Рыцарь");
 
-      user.hp = 100;
-      user.mana = 100;
-      user.lvl = 1;
-      user.xp = 0;
-      user.gold = 10; // Стартовое числовое золото со скриншота
-      user.que = "null"; // Сброс ID квеста под ваши новые переменные
-      user.queProg = 0; // Сброс прогресса квеста
-      user.loc = "centre";
-      user.acvip = "null";
-      user.acvip2 = "null"; // Вторая рука
-      user.arrmor = "null";
+      user.hp;
+      user.mana;
+      user.lvl;
+      user.xp;
+      user.gold;
+      user.que;
+      user.queProg;
+      user.loc;
+      user.acvip;
+      user.acvip2;
+      user.arrmor;
       for (let i = 1; i <= 9; i++) user["slot" + i] = "null";
 
       user.neme =

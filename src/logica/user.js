@@ -4,8 +4,8 @@ const user = {
   mana: 100,
   crit: 20, //20%
   xp: 0,
-  lvl: 1,
-  gold: 10,
+  lvl: 10,
+  gold: 1000,
   que: "null",
   queProg: 0,
   acvip: "null",
