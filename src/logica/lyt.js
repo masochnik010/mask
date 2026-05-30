@@ -29,7 +29,7 @@ const lyt = {
       price: 12,
       priceSell: 25,
     },
-    "тяжелый меч": {
+    тяжелый_меч: {
       name: "Тяжелый меч",
       expensesSlot: 3, // двуручное
       atk: 25,
@@ -42,14 +42,14 @@ const lyt = {
   magic: {
     посох: {
       name: "Посох",
-      expensesSlot: 3, // двуручное
+      expensesSlot: 1, // двуручное
       atk: 1,
       price: 20, // цена продажи
       priceSell: 40, // цена покупки
       magicAtac: 10, // урон магии
       expensesMana: 5, // Исключение: мана осталась без изменений
     },
-    "ученический жезл": {
+    ученический_жезл: {
       name: "Ученический жезл",
       expensesSlot: 1, // основная рука
       atk: 1,
@@ -58,87 +58,127 @@ const lyt = {
       magicAtac: 7,
       expensesMana: 8,
     },
-    "огненный жезл": {
+    огненный_жезл: {
       name: "Огненный жезл",
       expensesSlot: 1, // основная рука
       atk: 1,
       price: 35,
       priceSell: 70,
       magicAtac: 15,
-      expensesMana: 12, // Увеличено: было 6 -> стало 8 (6 * 1.25 = 7.5, округлено)
+      expensesMana: 12,
     },
-    "посох старейшины": {
+    посох_старейшины: {
       name: "Посох старейшины",
-      expensesSlot: 3, // двуручное
+      expensesSlot: 1, // двуручное
       atk: 1,
       price: 60,
       priceSell: 120,
       magicAtac: 24,
-      expensesMana: 15, // Увеличено: было 10 -> стало 13 (10 * 1.25 = 12.5, округлено)
+      expensesMana: 15,
     },
-    "архимагический посох": {
+    архимагический_посох: {
       name: "Архимагический посох",
-      expensesSlot: 3, // двуручное
+      expensesSlot: 1, // двуручное
       atk: 1,
       price: 150,
       priceSell: 300,
       magicAtac: 45,
       expensesMana: 25,
     },
+    книга_чар: {
+      name: "Книга чар",
+      expensesSlot: 2,
+      manaUp: 25,
+      price: 75,
+      priceSell: 150,
+    },
+    книга_чар2: {
+      name: "Книга чар",
+      expensesSlot: 2,
+      manaUp: 50,
+      price: 93.75,
+      priceSell: 187.5,
+    },
+    книга_чар3: {
+      name: "Книга чар",
+      expensesSlot: 2,
+      manaUp: 75,
+      price: 112.5,
+      priceSell: 225,
+    },
+    книга_чар3: {
+      name: "Книга чар",
+      expensesSlot: 2,
+      manaUp: 100,
+      price: 150,
+      priceSell: 300,
+    },
+    артефакт1: {
+      name: "Артефакт1",
+      expensesSlot: 5,
+      price: 250,
+      priceSell: 500,
+    },
+    аксессуар1: {
+      name: "Аксессуар1",
+      expensesSlot: 5,
+      price: 100,
+      priceSell: 200,
+    },
   },
 
   // Броня и защита (влияет только на защиту)
   armor: {
-    "деревяный щит": {
+    деревяный_щит: {
       name: "деревяный щит",
       expensesSlot: 2, // доп рука
       def: 1,
-      price: null,
+      price: 10,
       priceSell: 20,
     },
-    "ржавый щит": {
+    ржавый_щит: {
       name: "Ржавый щит",
       expensesSlot: 2, // доп рука
       def: 4,
-      price: 5,
+      price: 17.5,
       priceSell: 35,
     },
-    "железный щит": {
+    железный_щит: {
       name: "железный щит",
       expensesSlot: 2, // доп рука
       def: 8,
-      price: null,
+      price: 22.5,
       priceSell: 45,
     },
-    "башенный щит": {
+    башенный_щит: {
       name: "башенный щит",
       expensesSlot: 2, // доп рука
       def: 15,
-      price: null,
+      price: 45,
       priceSell: 90,
     },
     кожанка: {
       name: "кожанка",
       expensesSlot: 4, // броня
       def: 2,
-      price: null,
+      price: 12.5,
       priceSell: 25,
     },
-    "железная броня": {
+    железная_броня: {
       name: "железная броня",
       expensesSlot: 4, // броня
       def: 6,
-      price: null,
+      price: 30,
       priceSell: 60,
     },
-    "титановая броня": {
+    титановая_броня: {
       name: "титановая броня",
       expensesSlot: 4, // броня
       def: 12,
-      price: null,
+      price: 40,
       priceSell: 80,
     },
-    "тяжелый доспех": {
+    тяжелый_доспех: {
       name: "Тяжелый доспех",
       expensesSlot: 4, // броня
       def: 18,
@@ -147,6 +187,50 @@ const lyt = {
     },
   },
 
+  potions: {
+    малое_зелье_лечения: {
+      name: "Малое зелье лечения",
+      expensesSlot: 0, // Нельзя экипировать, это расходник
+      healHp: 25,
+      price: 2,
+      priceSell: 5,
+    },
+    среднее_зелье_лечения: {
+      name: "Среднее зелье лечения",
+      expensesSlot: 0,
+      healHp: 50,
+      price: 7,
+      priceSell: 15,
+    },
+    большое_зелье_лечения: {
+      name: "Большое зелье лечения",
+      expensesSlot: 0,
+      healHp: 75,
+      price: 15,
+      priceSell: 30,
+    },
+    зелье_маны: {
+      name: "Зелье маны",
+      expensesSlot: 0,
+      healMana: 25,
+      price: 5,
+      priceSell: 10,
+    },
+    зелье_маны_среднее: {
+      name: "Зелье маны среднее",
+      expensesSlot: 0,
+      healMana: 25,
+      price: 5,
+      priceSell: 10,
+    },
+    зелье_маны_большое: {
+      name: "Зелье маны большое",
+      expensesSlot: 0,
+      healMana: 25,
+      price: 5,
+      priceSell: 10,
+    },
+  },
   // чистые ресурсы и хлам без боевых стат
   misc: {
     слизь: {
@@ -159,7 +243,7 @@ const lyt = {
       price: 1,
       priceSell: null,
     },
-    "орочий амулет": {
+    орочий_амулет: {
       name: "Орочий амулет",
       price: 15,
       priceSell: null,
@@ -169,27 +253,32 @@ const lyt = {
       price: 10,
       priceSell: null,
     },
+    ухо_гоблина: {
+      name: "ухо гоблина",
+      price: 6,
+      priceSell: null,
+    },
     сундук: {
       name: "Сундук",
       price: 50,
       priceSell: null,
     },
-    "перо гарпии": {
+    перо_гарпии: {
       name: "Перо гарпии",
       price: 8,
       priceSell: null,
     },
-    "рог минотавра": {
+    рог_минотавра: {
       name: "Рог минотавра",
       price: 30,
       priceSell: null,
     },
-    "чешуя кобальта": {
+    чешуя_кобальта: {
       name: "Чешуя кобальта",
       price: 10,
       priceSell: null,
     },
-    "старый дневник": {
+    старый_дневник: {
       name: "Старый дневник",
       price: 20,
       priceSell: null,
@@ -199,7 +288,7 @@ const lyt = {
       price: 1,
       priceSell: null,
     },
-    "магическая сфера": {
+    магическая_сфера: {
       name: "Магическая сфера",
       price: 40,
       priceSell: null,

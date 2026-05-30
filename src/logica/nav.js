@@ -1,21 +1,18 @@
 const nav = {
-  where: function(user, loc) {
-    return loc.list[user.loc].ex;
+  where: function() {
+    return data.loc.list[data.user.loc].ex;
   },
-  kyda: function(user, dir, loc) {
-    const exit = this.where(user, loc);
-    if (exit && exit[dir]) {
-      const nexLoc = exit[dir];
-      user.loc = nexLoc;
-      return {
-        success: true,
-        msg: `успешный переход в ${loc.list[nexLoc].name}`,
-      };
+//команда север
+  kyda: function(com) {
+    const usLoc = data.user.loc;
+    const locEx = data.loc.list[usLoc].ex;
+
+    if(locEx[com]){
+      data.user.loc = locEx[com]
+      return { success: true, msg: "Туда можно" }
+    }else{
+      return{ success: false, msg: "Туда нельзя" }
     }
-    return {
-      success: false,
-      msg: `туда нельзя идти`,
-    };
   },
 };
 

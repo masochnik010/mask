@@ -45,14 +45,4 @@ const startCommand =
     ? `open "${htmlPath}"`
     : `xdg-open "${htmlPath}"`;
 
-// Выполняем команду
-exec(startCommand, (error) => {
-  if (error) {
-    console.error(
-      "Браузер не открылся сам, откройте файл src/index.html вручную:",
-      error.message,
-    );
-  } else {
-    console.log("Игра успешно инициализирована и запущена в браузере!");
-  }
-});
+

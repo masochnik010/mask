@@ -1,11 +1,13 @@
 const user = {
-  neme: "null",
+  name: "null",
   hp: 100,
+  MaxHp: 100,
   mana: 100,
-  crit: 20, //20%
+  MaxMana: 100,
+  crit: 2, //2%
   xp: 0,
-  lvl: 10,
-  gold: 1000,
+  lvl: 1,
+  gold: 10,
   que: "null",
   queProg: 0,
   acvip: "null",
