@@ -24,14 +24,28 @@ const lyt = {
     },
     лук: {
       name: "Лук",
-      expensesSlot: 3, // двуручное
+      expensesSlot: 1, // двуручное
       atk: 10,
       price: 12,
       priceSell: 25,
     },
+    меч_смерти: {
+      name: "меч смерти",
+      expensesSlot: 1, // двуручное
+      atk: 40,
+      price: 40,
+      priceSell: null,
+    },
+    большой_меч: {
+      name: "большой меч",
+      expensesSlot: 1, // двуручное
+      atk: 20,
+      price: 20,
+      priceSell: 40,
+    },
     тяжелый_меч: {
       name: "Тяжелый меч",
-      expensesSlot: 3, // двуручное
+      expensesSlot: 1, // двуручное
       atk: 25,
       price: 25,
       priceSell: 50,
@@ -69,7 +83,7 @@ const lyt = {
     },
     посох_старейшины: {
       name: "Посох старейшины",
-      expensesSlot: 1, // двуручное
+      expensesSlot: 1, 
       atk: 1,
       price: 60,
       priceSell: 120,
@@ -78,7 +92,7 @@ const lyt = {
     },
     архимагический_посох: {
       name: "Архимагический посох",
-      expensesSlot: 1, // двуручное
+      expensesSlot: 1,
       atk: 1,
       price: 150,
       priceSell: 300,

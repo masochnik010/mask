@@ -35,7 +35,7 @@ const dvi = {
       const usLoc = data.user.loc;
       const loca = data.loc.list[usLoc].nps;
       if (loca.includes("yorick")) {
-        return data.nps.list[1].yorick.quests;
+        return data.nps.list.yorick.quests;
       }
       return "тут нету ёрика";
     }
@@ -47,7 +47,7 @@ const dvi = {
       const usLoc = data.user.loc;
       const loca = data.loc.list[usLoc].nps;
       if (loca.includes("valera")) {
-        return data.nps.list[1].valera.quests;
+        return data.nps.list.valera.quests;
       }
       return "тут нету валеры";
     }
@@ -56,7 +56,7 @@ const dvi = {
     if (command.startsWith("купить ")) {
       const item = command.split(" ");
       const muni = data.user.gold;
-      const product = data.nps.list[0].valera.products;
+      const product = data.nps.list.valera.products;
       const Buy = product[item[1]];
       const tovarBuy = Buy[1];
       const tovaritem = Buy[0];
@@ -85,7 +85,7 @@ const dvi = {
     if (command.startsWith("взять ")) {
       const quest = command.split(" ");
       const questUser = data.user.que;
-      const product = data.nps.list[0].yorick.quests;
+      const product = data.nps.list.yorick.quests;
       const Buy = product[item[1]];
       const purpose = Buy[0];
       const quantity = Buy[1];
@@ -132,11 +132,73 @@ const dvi = {
       const usLoc = data.user.loc;
       const loca = data.loc.list[usLoc].nps;
       if (loca.includes("bab_zinu")) {
-        return data.nps.list[1].bab_zinu.heal;
+        return data.nps.list.bab_zinu.heal;
       }
       return "тут нету баб зины";
     }
-    if (q) {
+    if (command.startsWith("исцелиться ")) {
+      const sep = command.split(" ");
+      const slotSep = sep[1];
+      const buyHeal = data.nps.list.bab_zinu.heal;
+      const menHeal = buyHeal[slotSep];
+      const priseHeal = menHeal[1];
+      const healHp = menHeal[2];
+      const hpUser = data.user.hp;
+      if (data.user.gold < priseHeal) {
+        return `не хватает${priseHeal - data.user.gold}`;
+      }
+      data.user.hp = data.user.hp + healHp;
+      if (data.user.hp > data.user.MaxHp) {
+        data.user.hp = data.user.MaxHp;
+      }
+      data.user.gold = data.user.gold - priseHeal;
+      return `вы исцелены`;
+    }
+    //,kzzzzzzzzzzz экипировка 
+    if (command.startsWith("экиперовать ")) {
+      const sep = command.split(" ");
+      const slotSep = sep[1];
+      const userSlot = data.user[slotSep];
+      if (userSlot === "null") {
+        return `слот пусть`;
+      }
+      const idItems = userSlot.toLowerCase().replace(" ", "_");
+      if (data.lyt.weapons[idItems]) {
+        const potiW = data.lyt.weapons[idItems];
+        if (potiW.expensesSlot === 1) {
+          const subspace_pocket = data.user.acvip;
+          data.user.acvip = potiW.name;
+          data.user[slotSep] = subspace_pocket;
+          return `ты взял в основную руку ${potiW.name} `;
+        }
+      } else if (data.lyt.magic[idItems]) {
+        const potiM = data.lyt.magic[idItems];
+        if (potiM.expensesSlot === 1) {
+          const subspace_pocket = data.user.acvip;
+          data.user.acvip = potiM.name;
+          data.user[slotSep] = subspace_pocket;
+          return `ты взял в основную руку ${potiM.name} `;
+        } else if (potiM.expensesSlot === 2) {
+          const subspace_pocket = data.user.acvip2;
+          data.user.acvip2 = potiM.name;
+          data.user[slotSep] = subspace_pocket;
+          return `ты взял в дополнительную руку ${potiM.name} `;
+        }
+      } else if (data.lyt.armor[idItems]) {
+        const potiA = data.lyt.armor[idItems];
+
+        if (potiA.expensesSlot === 4) {
+          const subspace_pocket = data.user.arrmor;
+          data.user.arrmor = potiA.name;
+          data.user[slotSep] = subspace_pocket;
+          return `ты надел ${potiA.name} `;
+        } else if (potiA.expensesSlot === 2) {
+          const subspace_pocket = data.user.acvip2;
+          data.user.acvip2 = potiA.name;
+          data.user[slotSep] = subspace_pocket;
+          return `ты взял в дополнительную руку ${potiA.name} `;
+        }
+      }
     }
   },
   battle: function(bat) {},
