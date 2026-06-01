@@ -61,7 +61,7 @@ const lyt = {
       price: 20, // цена продажи
       priceSell: 40, // цена покупки
       magicAtac: 10, // урон магии
-      expensesMana: 5, // Исключение: мана осталась без изменений
+      expensesMana: 15, // Исключение: мана осталась без изменений
     },
     ученический_жезл: {
       name: "Ученический жезл",
@@ -70,7 +70,7 @@ const lyt = {
       price: 15,
       priceSell: 30,
       magicAtac: 7,
-      expensesMana: 8,
+      expensesMana: 12,
     },
     огненный_жезл: {
       name: "Огненный жезл",
@@ -79,16 +79,16 @@ const lyt = {
       price: 35,
       priceSell: 70,
       magicAtac: 15,
-      expensesMana: 12,
+      expensesMana: 20,
     },
     посох_старейшины: {
       name: "Посох старейшины",
-      expensesSlot: 1, 
+      expensesSlot: 1,
       atk: 1,
       price: 60,
       priceSell: 120,
-      magicAtac: 24,
-      expensesMana: 15,
+      magicAtac: 25,
+      expensesMana: 35,
     },
     архимагический_посох: {
       name: "Архимагический посох",
@@ -96,8 +96,8 @@ const lyt = {
       atk: 1,
       price: 150,
       priceSell: 300,
-      magicAtac: 45,
-      expensesMana: 25,
+      magicAtac: 40,
+      expensesMana: 50,
     },
     книга_чар: {
       name: "Книга чар",
@@ -110,7 +110,7 @@ const lyt = {
       name: "Книга чар",
       expensesSlot: 2,
       manaUp: 50,
-      price: 93.75,
+      price: 94,
       priceSell: 187.5,
     },
     книга_чар3: {

@@ -5,7 +5,7 @@ function lvl(xp, lvlUser) {
   }
   let lvlup = lvlUser + 1;
   let xpUpLimit = 0;
-  if (xp > xpNAlvl) {
+  if (xp >= xpNAlvl) {
     xpUpLimit = xp - xpNAlvl;
   }
   const qwe = [xpUpLimit, lvlup];
