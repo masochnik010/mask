@@ -112,3 +112,4 @@ const loc = {
 };
 
 if (typeof module !== "undefined") module.exports = loc;
+else window.loc = loc;

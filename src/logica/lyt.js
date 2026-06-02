@@ -302,6 +302,11 @@ const lyt = {
       price: 1,
       priceSell: null,
     },
+    драгоценость: {
+      name: "драгоценость",
+      price: 20,
+      priceSell: null,
+    },
     магическая_сфера: {
       name: "Магическая сфера",
       price: 40,

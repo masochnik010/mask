@@ -1,13 +1,11 @@
-const { weapons, magic } = require("./logica/lyt");
-
 const dvi = {
   data: null,
   actCom: null,
-  //деструктурирующее присваивание
+  currentSlot: null,
+
   start: function(systems) {
     const {
       nps,
-      brow,
       user,
       vrag,
       loc,
@@ -18,12 +16,21 @@ const dvi = {
       saveSys,
       lyt,
     } = systems;
-    console.log("запущено");
+
     dvi.data = systems;
   },
   comands: function(com) {
     const data = dvi.data;
     const command = com.trim().toLowerCase();
+
+    if (command.startsWith("сохронить")) {
+      data.saveSys.loading;
+      return `сохронено`;
+    }
+    if (command.startsWith("загрузить")) {
+      data.saveSys.unloading;
+      return `загружено`;
+    }
 
     if (command.startsWith("использовать ")) {
       const sep = command.split(" ");
@@ -52,6 +59,7 @@ const dvi = {
       data.user[slotSep] = "null";
       return `предмет ${poti.name} использован`;
     }
+
     //проверка на бой
     if (dvi.actCom) {
       if (command === "бой") {
@@ -126,6 +134,9 @@ const dvi = {
       return `вызяли квест на ${purpose} за ${prise} надо убить ${quantity}`;
     }
     let item = null;
+    const acvip = data.user.acvip;
+    const acvip2 = data.user.acvip2;
+    const Uslot = command.split(" ")[1];
 
     if (acvip === "arrmor" || acvip === "acvip2") {
       item = data.lyt.armor[Uslot];
@@ -233,8 +244,32 @@ const dvi = {
       dvi.actCom = structuredClone(data.vrag[vragss]);
       return `бой начат с ${dvi.actCom.name}`;
     }
+    if (command.startsWith("сдать квест")) {
+      if (data.user.que === "null") {
+        return `нет квеста`;
+      }
+      if (data.loc.list[data.user.loc].nps.includes("yorick")) {
+        const qU = data.user.que;
+        for (let i = 1; i <= 10; i++) {
+          if (data.nps.list.yorick.quests["q" + i][0] === qU) {
+            if (data.user.queProg >= data.nps.list.yorick.quests["q" + i][1]) {
+              data.user.gold =
+                data.user.gold + data.nps.list.yorick.quests["q" + i][2];
+              data.user.que = "null";
+              data.user.queProg = 0;
+              return `вы сдали квест на ${
+                data.nps.list.yorick.quests["q" + i][0]
+              }`;
+            }
+            return `ты еще не завершил квест`;
+          }
+        }
+      }
+      return `ёрика нету`;
+    }
   },
   battle: function(bat) {
+    const data = dvi.data;
     if (!data.actCom) {
       return "узбагойся, боя нет";
     }
@@ -304,13 +339,8 @@ const dvi = {
 
       // Шаг 5. Проверка смерти монстра и вызов lvl.js
       if (enemy.hp <= 0) {
-        // Начисляем грязный опыт игроку
         data.user.xp += enemy.xpDrop;
-        data.user.gold += enemy.goldDrop || 10;
 
-        // Вызываем твой файл-калькулятор уровней
-        // На входе: (опыт + опыт за моба, текущий уровень)
-        // На выходе получаем массив: [остаток_опыта, новый_уровень]
         const lvlRezyltat = lvl(data.user.xp, data.user.lvl);
 
         // Проверяем, вырос ли уровень
@@ -325,10 +355,9 @@ const dvi = {
           // Полное исцеление в награду за лвлап
           data.user.hp = data.user.MaxHp;
           data.user.mana = data.user.MaxMana;
-
-          logBattle += `\n✨ УРОВЕНЬ ПОВЫШЕН! Вы достигли ${data.user.lvl} уровня и полностью исцелены! ✨\n`;
+          //лвл
+          logBattle += `\n УРОВЕНЬ ПОВЫШЕН! Вы достигли ${data.user.lvl} и исцелены! ☺,\n`;
         } else {
-          // Если уровень не вырос, просто обновляем текущий опыт
           data.user.xp = lvlRezyltat[0];
         }
 
@@ -342,11 +371,18 @@ const dvi = {
 
         // Выпадение случайного лута в пустой слот (slot1-slot9)
         let dropText = "";
-        if (data.prch.RandDropChance() && enemy.drop && enemy.drop.length > 0) {
+        if (enemy.drop[0] === "Золото") {
+          const goldAmount = enemy.drop[1];
+          data.user.gold = data.user.gold + goldAmount;
+          dropText = ` Вы нашли золото ${goldAmount}`;
+        } else if (enemy.drop.length > 0) {
+          const rand = prch.randomNum(0, enemy.drop.length - 1);
+
+          const item = enemy.drop[rand];
           for (let i = 1; i <= 9; i++) {
             if (data.user["slot" + i] === "null") {
-              data.user["slot" + i] = enemy.drop[0];
-              dropText = ` Вы нашли предмет: ${enemy.drop[0]}!`;
+              data.user["slot" + i] = item;
+              dropText = ` Вы нашли предмет: ${item}!`;
               break;
             }
           }
@@ -389,3 +425,4 @@ const dvi = {
     return "Неизвестная боевая команда! Доступно: атака";
   },
 };
+if (typeof module !== "undefined") module.exports = dvi;

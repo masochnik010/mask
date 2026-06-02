@@ -9,8 +9,7 @@ const yron = {
       return hp;
     } else if (hp <= damg) {
       return 0;
-    }
-    return hp - damg;
+    } else return hp - damg;
   },
 };
 

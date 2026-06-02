@@ -2,29 +2,30 @@ const fs = require("fs");
 const path = require("path");
 const put = path.resolve(__dirname, "savDeta.json");
 
-const dvi = {
+const saveSys = {
   data: null,
-  actCom: null,
   //деструктурирующее присваивание
   start: function(systems) {
     const { user } = systems;
-    dvi.data = systems;
+    saveSys.data = systems;
   },
 
-  loading: function(Uslot) {
+  loading: function() {
     const q = JSON.parse(fs.readFileSync(put, "utf8"));
-    q[Uslot] = dvi.data.user;
+    q.slot1 = saveSys.data.user;
     const qwe = JSON.stringify(q, null, 2);
     fs.writeFileSync(put, qwe, "utf8");
     return `загружен`;
   },
 
-  unloading: function(Uslot) {
+  unloading: function() {
     const q = JSON.parse(fs.readFileSync(put, "utf8"));
-    dvi.data.user = q[Uslot];
+    saveSys.data.user = q.slot1;
     return `выгружен`;
   },
 };
+if (typeof module !== "undefined") module.exports = saveSys;
+
 // JSON.parse()
 //— преобразует строку JSON в объект.
 // JSON.stringify()
