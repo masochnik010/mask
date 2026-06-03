@@ -12,20 +12,11 @@ const nav = require("../src/logica/nav.js");
 const saveSys = require("./save.js");
 const engine = require("../src/index.js");
 
-const { exec } = require("child_process");
 const path = require("path");
-const os = require("os");
+const open = require("open");
 
 const htmlPath = path.resolve(__dirname, "../src/index.html");
 
-let openCmd;
-if (os.platform() === "win32") openCmd = `start "" "${htmlPath}"`;
-else if (os.platform() === "darwin") openCmd = `open "${htmlPath}"`;
-else openCmd = `xdg-open "${htmlPath}"`;
-
-exec(openCmd); // Открываем браузер автоматически!
-
-// Запуск движка (Твой блок один в один)
 engine.start({
   nps,
   user,
