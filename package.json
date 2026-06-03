@@ -25,7 +25,9 @@
     "eslint-config-frontend": "^1.0.12"
   },
   "dependencies": {
+    "express": "^5.2.1",
     "make": "^0.8.1",
+    "open": "^11.0.0",
     "prompt-sync": "^4.2.0",
     "ws": "^8.21.0"
   }

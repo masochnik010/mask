@@ -7,7 +7,7 @@
     "MaxMana": 100,
     "crit": 2,
     "xp": 0,
-    "lvl": 1,
+    "lvl": 10,
     "gold": 10,
     "que": "null",
     "queProg": 0,
@@ -23,6 +23,6 @@
     "slot7": "null",
     "slot8": "null",
     "slot9": "null",
-    "loc": "centre"
+    "loc": "forest"
   }
 }

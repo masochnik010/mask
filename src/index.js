@@ -18,65 +18,106 @@ const dvi = {
     } = systems;
 
     dvi.data = systems;
+    dvi.currentSlot = "slot1";
+
+    systems.saveSys.data = systems;
+    if (nav) nav.data = systems;
+
+    systems.saveSys.unloading("slot1");
+    const saveData = systems.saveSys.data.user;
+
+    if (saveData && saveData !== "null" && typeof saveData === "object") {
+      Object.assign(systems.user, saveData);
+      console.log("ЗАГРУЖЕНО!");
+    } else {
+      console.log("НОВАЯ ИГРА");
+    }
   },
+
+  loading: function(Uslot) {
+    return dvi.data.saveSys.loading(Uslot);
+  },
+
+  unloading: function(Uslot) {
+    return dvi.data.saveSys.unloading(Uslot);
+  },
+
   comands: function(com) {
     const data = dvi.data;
+    const user = data.user;
+    const yron = data.yron;
+    const prch = data.prch;
+    const nps = data.nps;
+
+    const fs = require("fs");
+    const path = require("path");
+    const dataJsonPath = path.resolve(__dirname, "../bin/data.json");
+
     const command = com.trim().toLowerCase();
 
-    if (command.startsWith("сохронить")) {
-      data.saveSys.loading;
-      return `сохронено`;
+    if (fs.existsSync(dataJsonPath)) {
+      try {
+        fs.writeFileSync(dataJsonPath, "{}");
+      } catch (e) {
+        console.error("Ошибка очистки файла в {}", e);
+      }
     }
-    if (command.startsWith("загрузить")) {
-      data.saveSys.unloading;
-      return `загружено`;
+
+    if (command === "сохранить") {
+      return data.saveSys.loading();
+    }
+    if (command === "загрузить") {
+      return data.saveSys.unloading();
     }
 
     if (command.startsWith("использовать ")) {
       const sep = command.split(" ");
       const slotSep = sep[1];
-      const userSlot = data.user[slotSep];
-      if (userSlot === "null") {
-        return `слот пусть`;
+      const userSlot = data.user["slot" + slotSep];
+      if (userSlot === "null" || !userSlot) {
+        return "слот пусть";
       }
       const idItems = userSlot.toLowerCase().replace(" ", "_");
       const poti = data.lyt.potions[idItems];
+      if (!poti) return "Этот предмет нельзя использовать как зелье.";
+
       if (poti.healHp) {
         const heal = poti.healHp;
-        const hpUs = data.user.MaxHp - data.user.hp;
         data.user.hp = data.user.hp + heal;
         if (data.user.hp > data.user.MaxHp) {
           data.user.hp = data.user.MaxHp;
         }
       } else if (poti.healMana) {
         const heal = poti.healMana;
-        const hpUs = data.user.MaxMana - data.user.mana;
         data.user.mana = data.user.mana + heal;
         if (data.user.mana > data.user.MaxMana) {
           data.user.mana = data.user.MaxMana;
         }
       }
-      data.user[slotSep] = "null";
-      return `предмет ${poti.name} использован`;
+      data.user["slot" + slotSep] = "null";
+      return "предмет " + poti.name + " использован";
     }
 
-    //проверка на бой
     if (dvi.actCom) {
       if (command === "бой") {
-        return `ты уже в бою с ${dvi.actCom.name}`;
+        return "ты уже в бою с " + dvi.actCom.name;
       }
       return dvi.battle(command);
     }
-    //ёрик квесты
+
     if (command.startsWith("говорить с ёриком") || command.startsWith("ёрик")) {
       const usLoc = data.user.loc;
       const loca = data.loc.list[usLoc].nps;
       if (loca.includes("yorick")) {
-        return data.nps.list.yorick.quests;
+        return (
+          "Контракты Ёрика:\n1. Охота на Слизней (Надо убить: " +
+          data.nps.list.yorick.quests.q1 +
+          ")\nВведите 'взять q1', чтобы подписать договор."
+        );
       }
       return "тут нету ёрика";
     }
-    //валера торговец
+
     if (
       command.startsWith("говорить с валерой") ||
       command.startsWith("валера")
@@ -84,76 +125,76 @@ const dvi = {
       const usLoc = data.user.loc;
       const loca = data.loc.list[usLoc].nps;
       if (loca.includes("valera")) {
-        return data.nps.list.valera.quests;
+        return "Валера: Привет, путник! Можешь 'купить mech' за монеты или написать 'продать slot1-9', чтобы сдать хлам.";
       }
       return "тут нету валеры";
     }
-    //*крик души*АААААААААААААААААААААААААААААААААААА
 
     if (command.startsWith("купить ")) {
-      const item = command.split(" ");
+      const item = command.split(" ")[1];
       const muni = data.user.gold;
       const product = data.nps.list.valera.products;
-      const Buy = product[item[1]];
-      const tovarBuy = Buy[1];
-      const tovaritem = Buy[0];
-      if (tovarBuy > muni) {
-        return `тебе не хватает ${tovarBuy - muni}`;
+      const Buy = product[item];
+      if (!Buy) return "Валера: У меня нет такого товара!";
+
+      if (Buy > muni) {
+        return "тебе не хватает " + (Buy - muni);
       }
 
-      const slotUser = prompt("ведите слот инвенторя 1-9");
+      const slotUser = prompt("введите слот инвентаря 1-9");
       const slotNum = "slot" + slotUser;
       if (isNaN(slotUser)) {
-        return `разрешены только числа `;
-      } else if (slotUser > 9) {
-        return `у тебя нету столько места`;
-      } else if (slotUser <= 0) {
-        return `у тебя нету столько места`;
+        return "разрешены только числа ";
+      } else if (slotUser > 9 || slotUser <= 0) {
+        return "у тебя нету столько места";
       }
       if (data.user[slotNum] !== "null") {
         return "место неть";
       }
-      data.user[slotNum] = tovaritem;
-      data.user.gold = muni - tovarBuy;
-      return `спасибо за покупку ${data.user.name}`;
+
+      data.user[slotNum] = item;
+      data.user.gold = muni - Buy;
+      return "спасибо за покупку " + data.user.name;
     }
-    //а у меня пицца и сосиски в тесте, домашние. А у вас? (•ω•) 30.05.2026
 
     if (command.startsWith("взять ")) {
-      const quest = command.split(" ");
+      const item = command.split(" ")[1];
       const questUser = data.user.que;
       const product = data.nps.list.yorick.quests;
-      const Buy = product[item[1]];
-      const purpose = Buy[0];
-      const quantity = Buy[1];
-      const prise = Buy[2];
-      if (questUser === nill) {
-        return `квест уже есть`;
+      const Buy = product[item];
+      if (!Buy) return "Такого контракта нет у Ёрика!";
+
+      if (questUser !== "null") {
+        return "квест уже есть";
       }
-      data.user.que = purpose;
-      return `вызяли квест на ${purpose} за ${prise} надо убить ${quantity}`;
-    }
-    let item = null;
-    const acvip = data.user.acvip;
-    const acvip2 = data.user.acvip2;
-    const Uslot = command.split(" ")[1];
 
-    if (acvip === "arrmor" || acvip === "acvip2") {
-      item = data.lyt.armor[Uslot];
-    } else if (data.lyt.weapons[Uslot]) {
-      item = data.lyt.weapons[Uslot];
-    } else if (data.lyt.magic[Uslot]) {
-      item = data.lyt.magic[Uslot];
-    } else if (!item) {
-      return "Не тот тип";
+      data.user.que = item;
+      data.user.queProg = 0;
+      return "взяли квест за " + Buy;
     }
-    const buyItem = item.price;
-    data.user.gold = data.user.gold + buyItem;
-    let qwe = data.user[acvip];
-    data.user[acvip] = "null";
-    return `вы продали ${qwe}`;
 
-    //  баб зина медик
+    if (command.startsWith("продать ")) {
+      const sep = command.split(" ");
+      const Uslot = sep[1];
+      if (!user["slot" + Uslot] || user["slot" + Uslot] === "null")
+        return "Этот слот рюкзака пуст!";
+
+      let itemObj = null;
+      const itemKey = user["slot" + Uslot].toLowerCase().replace(" ", "_");
+
+      if (data.lyt.armor[itemKey]) itemObj = data.lyt.armor[itemKey];
+      else if (data.lyt.weapons[itemKey]) itemObj = data.lyt.weapons[itemKey];
+      else if (data.lyt.magic[itemKey]) itemObj = data.lyt.magic[itemKey];
+
+      if (!itemObj) return "Валера: Не тот тип, я такое не беру!";
+
+      const buyItem = itemObj.price;
+      data.user.gold = data.user.gold + buyItem;
+      let oldName = data.user["slot" + Uslot];
+      data.user["slot" + Uslot] = "null";
+      return "вы продали " + oldName + " за " + buyItem + " монет.";
+    }
+
     if (
       command.startsWith("говорить с баб зиной") ||
       command.startsWith("баб зина")
@@ -161,152 +202,171 @@ const dvi = {
       const usLoc = data.user.loc;
       const loca = data.loc.list[usLoc].nps;
       if (loca.includes("bab_zinu")) {
-        return data.nps.list.bab_zinu.heal;
+        return "Баба Зина: Привет, соколик! Напиши 'исцелиться 1', чтобы попить чайку за 5 золотых.";
       }
       return "тут нету баб зины";
     }
+
     if (command.startsWith("исцелиться ")) {
       const sep = command.split(" ");
       const slotSep = sep[1];
       const buyHeal = data.nps.list.bab_zinu.heal;
       const menHeal = buyHeal[slotSep];
-      const priseHeal = menHeal[1];
-      const healHp = menHeal[2];
-      const hpUser = data.user.hp;
-      if (data.user.gold < priseHeal) {
-        return `не хватает${priseHeal - data.user.gold}`;
+      if (!menHeal) return "Баба Зина: Нет у меня такого отвара!";
+
+      if (data.user.gold < menHeal) {
+        return "не хватает " + (menHeal - data.user.gold);
       }
-      data.user.hp = data.user.hp + healHp;
-      if (data.user.hp > data.user.MaxHp) {
-        data.user.hp = data.user.MaxHp;
-      }
-      data.user.gold = data.user.gold - priseHeal;
-      return `вы исцелены`;
+      data.user.hp = data.user.MaxHp;
+      data.user.gold = data.user.gold - menHeal;
+      return "вы исцелены";
     }
-    //,kzzzzzzzzzzz экипировка
+
     if (command.startsWith("экиперовать ")) {
       const sep = command.split(" ");
       const slotSep = sep[1];
-      const userSlot = data.user[slotSep];
-      if (userSlot === "null") {
-        return `слот пусть`;
+      const userSlot = data.user["slot" + slotSep];
+      if (userSlot === "null" || !userSlot) {
+        return "слот пусть";
       }
       const idItems = userSlot.toLowerCase().replace(" ", "_");
+
       if (data.lyt.weapons[idItems]) {
         const potiW = data.lyt.weapons[idItems];
         if (potiW.expensesSlot === 1) {
           const subspace_pocket = data.user.acvip;
           data.user.acvip = potiW.name;
-          data.user[slotSep] = subspace_pocket;
-          return `ты взял в основную руку ${potiW.name} `;
+          data.user["slot" + slotSep] = subspace_pocket;
+          return "ты взял в основную руку " + potiW.name;
         }
       } else if (data.lyt.magic[idItems]) {
         const potiM = data.lyt.magic[idItems];
         if (potiM.expensesSlot === 1) {
           const subspace_pocket = data.user.acvip;
           data.user.acvip = potiM.name;
-          data.user[slotSep] = subspace_pocket;
-          return `ты взял в основную руку ${potiM.name} `;
+          data.user["slot" + slotSep] = subspace_pocket;
+          return "ты взял в основную руку " + potiM.name;
         } else if (potiM.expensesSlot === 2) {
           const subspace_pocket = data.user.acvip2;
           data.user.acvip2 = potiM.name;
-          data.user[slotSep] = subspace_pocket;
-          return `ты взял в дополнительную руку ${potiM.name} `;
+          data.user["slot" + slotSep] = subspace_pocket;
+          return "ты взял в дополнительную руку " + potiM.name;
         }
       } else if (data.lyt.armor[idItems]) {
         const potiA = data.lyt.armor[idItems];
-
         if (potiA.expensesSlot === 4) {
           const subspace_pocket = data.user.arrmor;
           data.user.arrmor = potiA.name;
-          data.user[slotSep] = subspace_pocket;
-          return `ты надел ${potiA.name} `;
+          data.user["slot" + slotSep] = subspace_pocket;
+          return "ты надел " + potiA.name;
         } else if (potiA.expensesSlot === 2) {
           const subspace_pocket = data.user.acvip2;
           data.user.acvip2 = potiA.name;
-          data.user[slotSep] = subspace_pocket;
-          return `ты взял в дополнительную руку ${potiA.name} `;
+          data.user["slot" + slotSep] = subspace_pocket;
+          return "ты взял в дополнительную руку " + potiA.name;
         }
       }
+      return "Этот предмет нельзя экипировать!";
     }
+
     if (command.startsWith("идти на ")) {
-      const sep = command.split(" ");
-      const nap = sep[2];
+      const nap = command.replace("идти на ", "").trim();
       const kyd = data.nav.kyda(nap);
+      if (kyd.success) {
+        data.user.loc = kyd.newLoc || data.user.loc;
+        dvi.loading(dvi.currentSlot);
+        return "Вы успешно переместились!";
+      }
       return kyd.msg;
     }
-    if (command.startsWith("бой")) {
-      const loc = data.user.loc;
-      const random = data.prch.randomNum;
-      const Vrags = data.loc.list[loc].enemies;
+
+    if (command === "бой") {
+      const currentLocKey =
+        data.user.loc && data.user.loc !== "null" ? data.user.loc : "centre";
+      const currentRoomObj = data.loc.list[currentLocKey];
+      if (!currentRoomObj) return "Локация не прогружена.";
+
+      const Vrags = currentRoomObj.enemies;
+      if (!Vrags || Vrags.length === 0)
+        return "На этой локации нет монстров, тут безопасно 💤";
+
       const col = Vrags.length - 1;
-      const vragss = Vrags[random(0, col)];
-      dvi.actCom = structuredClone(data.vrag[vragss]);
-      return `бой начат с ${dvi.actCom.name}`;
-    }
-    if (command.startsWith("сдать квест")) {
-      if (data.user.que === "null") {
-        return `нет квеста`;
+      const vragss = Vrags[data.prch.randomNum(0, col)];
+      if (!vragss) return "Не удалось найти монстра.";
+
+      let targetMonster =
+        data.vrag[vragss] ||
+        data.vrag[vragss.toLowerCase()] ||
+        data.vrag["sliz"];
+      if (!targetMonster) return "Монстр отсутствует в базе.";
+
+      dvi.actCom = JSON.parse(JSON.stringify(targetMonster));
+
+      if (!dvi.actCom.MaxHp && dvi.actCom.maxHp) {
+        dvi.actCom.MaxHp = dvi.actCom.maxHp;
       }
+
+      return "бой начат с " + dvi.actCom.name;
+    }
+
+    if (command.startsWith("сдать квест")) {
+      if (data.user.que === "null") return "нет квеста";
       if (data.loc.list[data.user.loc].nps.includes("yorick")) {
         const qU = data.user.que;
         for (let i = 1; i <= 10; i++) {
-          if (data.nps.list.yorick.quests["q" + i][0] === qU) {
-            if (data.user.queProg >= data.nps.list.yorick.quests["q" + i][1]) {
-              data.user.gold =
-                data.user.gold + data.nps.list.yorick.quests["q" + i][2];
+          if (
+            data.nps.list.yorick.quests["q" + i] &&
+            data.nps.list.yorick.quests["q" + i] === qU
+          ) {
+            if (data.user.queProg >= data.nps.list.yorick.quests["q" + i]) {
+              data.user.gold = data.user.gold + 10;
               data.user.que = "null";
               data.user.queProg = 0;
-              return `вы сдали квест на ${
-                data.nps.list.yorick.quests["q" + i][0]
-              }`;
+              dvi.loading(dvi.currentSlot);
+              return "вы сдали квест";
             }
-            return `ты еще не завершил квест`;
+            return "ты еще не завершил квест";
           }
         }
       }
-      return `ёрика нету`;
+      return "ёрика нету";
     }
+
+    if (command === "статы") {
+      return (
+        "Имя: " + user.name + " Уровень: " + user.lvl + " Золото: " + user.gold
+      );
+    }
+
+    return "Неизвестная мирная команда.";
   },
+
   battle: function(bat) {
     const data = dvi.data;
-    if (!data.actCom) {
-      return "узбагойся, боя нет";
-    }
-    const hp = data.user.hp;
+    if (!data.actCom) return "узбагойся, боя нет";
+
     let MaxHp = data.user.MaxHp;
-    const mana = data.user.mana;
     let maxMana = data.user.MaxMana;
     let crit = data.user.crit;
-    const xp = data.user.xp;
     const lvl = data.user.lvl;
     let que = data.user.que;
-    let queProg = data.user.queProg;
+
     const acvip = data.user.acvip.toLowerCase().replace(" ", "_");
     const acvip2 = data.user.acvip2.toLowerCase().replace(" ", "_");
     const arrmor = data.user.arrmor.toLowerCase().replace(" ", "_");
 
     if (lvl > 1) {
-      const lv = lvl * 5;
-      const mH = MaxHp + lv;
-      if (mH !== MaxHp) {
-        MaxHp = mH;
-      }
-      const mMa = maxMana + lv;
-      if (mMa !== maxMana) {
-        maxMana = mMa;
-      }
-      const ct = crit + 2;
-      if (ct !== crit) {
-        crit = ct;
-      }
+      const lv = (lvl - 1) * 5;
+      MaxHp = MaxHp + lv;
+      maxMana = maxMana + lv;
+      crit = crit + (lvl - 1) * 2;
     }
 
     const enemy = data.actCom;
     let logBattle = "";
 
     if (bat === "атака") {
-      let dmg = 2; // Сила голых кулаков
+      let dmg = 2;
       if (data.user.acvip !== "null") {
         const tip = data.lyt.weapons[acvip] ? "weapons" : "magic";
         if (tip === "weapons") {
@@ -315,10 +375,9 @@ const dvi = {
         } else if (tip === "magic") {
           const expM = data.lyt.magic[acvip].expensesMana;
           const atcM = data.lyt.magic[acvip].magicAtac;
-          if (mana >= expM) {
-            dmg = dmg - 2;
-            dmg = dmg + atcM;
-            mana = mana - expM;
+          if (data.user.mana >= expM) {
+            dmg = dmg - 2 + atcM;
+            data.user.mana = data.user.mana - expM;
           } else {
             dmg = dmg + 1;
           }
@@ -328,101 +387,96 @@ const dvi = {
 
       if (data.prch.crit(crit)) {
         dmg = dmg * 2;
-        logBattle += "Крит";
-      }
-      //урон по мончтру
-      if (dmg > 0) {
-        const damage = yron.damage(dmg, enemy.def);
-        enemy.hp = yron.rezyltat(enemy.hp, dmg, enemy.def);
-        logBattle += `вы нанесли ${enemy.name} ${damage} урона`;
+        logBattle += "Крит! ";
       }
 
-      // Шаг 5. Проверка смерти монстра и вызов lvl.js
+      if (dmg > 0) {
+        const damage = data.yron.damage(dmg, enemy.def);
+        enemy.hp = data.yron.rezyltat(enemy.hp, dmg, enemy.def);
+        logBattle += "Вы нанесли " + enemy.name + " " + damage + " урона.\n";
+      }
+
       if (enemy.hp <= 0) {
         data.user.xp += enemy.xpDrop;
+        data.user.gold += 10;
 
-        const lvlRezyltat = lvl(data.user.xp, data.user.lvl);
-
-        // Проверяем, вырос ли уровень
-        if (lvlRezyltat[1] > data.user.lvl) {
-          data.user.xp = lvlRezyltat[0]; // Записываем остаток опыта
-          data.user.lvl = lvlRezyltat[1]; // Записываем новый уровень
-
-          // Навсегда повышаем потолок характеристик персонажа
+        const lvlRezyltat = data.lvl(data.user.xp, data.user.lvl);
+        if (lvlRezyltat > data.user.lvl) {
+          data.user.xp = lvlRezyltat;
+          data.user.lvl = lvlRezyltat;
           data.user.MaxHp += 5;
           data.user.MaxMana += 5;
-
-          // Полное исцеление в награду за лвлап
           data.user.hp = data.user.MaxHp;
           data.user.mana = data.user.MaxMana;
-          //лвл
-          logBattle += `\n УРОВЕНЬ ПОВЫШЕН! Вы достигли ${data.user.lvl} и исцелены! ☺,\n`;
+          logBattle += "\nУРОВЕНЬ ПОВЫШЕН!\n";
         } else {
-          data.user.xp = lvlRezyltat[0];
+          data.user.xp = lvlRezyltat;
         }
 
-        // Проверка квеста Ёрика
-        if (que !== "null" && data.nps.list.yorick.quests[que]) {
-          const questTarget = data.nps.list.yorick.quests[que];
-          if (enemy.name === questTarget[0]) {
-            data.user.queProg += 1;
-          }
+        if (que !== "null" && enemy.name === que) {
+          data.user.queProg += 1;
         }
 
-        // Выпадение случайного лута в пустой слот (slot1-slot9)
         let dropText = "";
-        if (enemy.drop[0] === "Золото") {
-          const goldAmount = enemy.drop[1];
-          data.user.gold = data.user.gold + goldAmount;
-          dropText = ` Вы нашли золото ${goldAmount}`;
-        } else if (enemy.drop.length > 0) {
-          const rand = prch.randomNum(0, enemy.drop.length - 1);
-
+        if (enemy.drop && enemy.drop.length > 0) {
+          const rand = data.prch.randomNum(0, enemy.drop.length - 1);
           const item = enemy.drop[rand];
           for (let i = 1; i <= 9; i++) {
             if (data.user["slot" + i] === "null") {
               data.user["slot" + i] = item;
-              dropText = ` Вы нашли предмет: ${item}!`;
+              dropText = " Вы нашли предмет: " + item;
               break;
             }
           }
         }
 
-        data.actCom = null; // Выходим из боя
-        return `${logBattle}Поздравляем! Монстр ${enemy.name} повержен! Получено опыта: ${enemy.xpDrop}.${dropText}`;
+        data.actCom = null;
+        dvi.loading(dvi.currentSlot);
+        return logBattle + "Монстр " + enemy.name + " повержен!" + dropText;
       }
 
-      // Шаг 6. Ответный удар выжившего монстра
       let playerDef = 0;
-      if (arrmor !== "null") {
-        const armorData = data.lyt.armor[arrmor];
-        if (armorData) playerDef += armorData.def;
-      }
-      if (acvip2 !== "null") {
-        const shieldData = data.lyt.armor[acvip2];
-        if (shieldData) playerDef += shieldData.def;
-      }
-      // Применяем к защите твой бонус уровня
+      if (arrmor !== "null" && data.lyt.armor[arrmor])
+        playerDef += data.lyt.armor[arrmor].def;
+      if (acvip2 !== "null" && data.lyt.armor[acvip2])
+        playerDef += data.lyt.armor[acvip2].def;
       playerDef = Math.round(playerDef * (1 + (lvl - 1) * 0.05));
 
-      // Наносим урон игроку через твой модуль урона
-      const enemyDmg = yron.damage(enemy.atk, playerDef);
-      data.user.hp = yron.rezyltat(data.user.hp, enemy.atk, playerDef);
-      logBattle += `Монстр ${enemy.name} ударил вас в ответ на ${enemyDmg} урона.\n`;
+      const enemyDmg = data.yron.damage(enemy.atk, playerDef);
+      data.user.hp = data.yron.rezyltat(data.user.hp, enemy.atk, playerDef);
+      logBattle +=
+        "Монстр " +
+        enemy.name +
+        " ударил вас в ответ на " +
+        enemyDmg +
+        " урона.\n";
 
-      // Проверка гибели игрока и респавн у Бабы Зины
       if (data.user.hp <= 0) {
         data.actCom = null;
         data.user.hp = data.user.MaxHp;
         data.user.loc = "centre";
-        return `${logBattle}Вы погибли в бою! Баба Зина воскресила вас у костра в Центральной деревне.`;
+        dvi.loading(dvi.currentSlot);
+        return logBattle + "Вы погибли в бою!";
       }
 
-      // Если все выжили — возвращаем текущее здоровье участников
-      return `${logBattle}Ваше HP: ${data.user.hp}/${MaxHp} | HP монстра: ${enemy.hp}/${enemy.maxHp}`;
+      return (
+        logBattle +
+        "Ваше HP: " +
+        data.user.hp +
+        "/" +
+        MaxHp +
+        " | HP монстра: " +
+        enemy.hp +
+        "/" +
+        (enemy.MaxHp || enemy.maxHp)
+      );
     }
-
-    return "Неизвестная боевая команда! Доступно: атака";
+    return "Неизвестная боевая команда!";
   },
 };
-if (typeof module !== "undefined") module.exports = dvi;
+
+if (typeof module !== "undefined") {
+  module.exports = dvi;
+} else {
+  window.dvi = dvi;
+}
