@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Легенда Севера</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+
+    <div class="commands">
+        <h3>Команды</h3>
+
+        <p>имя Артур</p>
+        <p>класс воин</p>
+        <p>класс маг</p>
+
+        <hr>
+
+        <p>осмотреться</p>
+        <p>говорить</p>
+
+        <hr>
+
+        <p>идти деревня</p>
+        <p>идти лес</p>
+        <p>идти пещера</p>
+        <p>идти башня</p>
+        <p>идти рынок</p>
+
+        <hr>
+
+        <p>атаковать волк</p>
+        <p>атаковать гоблин</p>
+        <p>атаковать босс</p>
+
+        <hr>
+
+        <p>купить зелье</p>
+        <p>использовать зелье</p>
+
+        <hr>
+
+        <p>инвентарь</p>
+        <p>характеристики</p>
+        <p>история</p>
+    </div>
+
+    <div class="game">
+
+        <h2>Легенда Севера</h2>
+
+        <div id="stats"></div>
+
+        <div id="output"></div>
+
+        <div class="input-area">
+
+            <input
+                type="text"
+                id="command"
+                placeholder="Введите команду..."
+            >
+
+            <button onclick="processCommand()">
+                Отправить
+            </button>
+
+        </div>
+
+        <div class="save-buttons">
+            <button onclick="saveGame()">
+                Сохранить
+            </button>
+
+            <button onclick="loadGame()">
+                Загрузить
+            </button>
+        </div>
+
+    </div>
+
+</div>
+
+<script src="index.js"></script>
+
+</body>
+</html>
