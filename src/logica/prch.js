@@ -32,7 +32,7 @@ const prch = {
   },
 
   // Расчет выпадения лута после смерти монстра (шанс 50%)
-  RanDropChance: function() {
+  RanDropChance : function() {
     const chance = this.Num1_100();
     if (chance <= 50) {
       return true;
