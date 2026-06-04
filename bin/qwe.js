@@ -33,16 +33,30 @@ app.use(express.static(path.join(__dirname, "..")));
 const filePath = path.join(__dirname, "data.json");
 
 if (!fs.existsSync(filePath)) {
-  fs.writeFileSync(filePath, JSON.stringify({ comand: "" }, null, 2), "utf8");
+  fs.writeFileSync(
+    filePath,
+    JSON.stringify({ comand: "", activeMonster: null }, null, 2),
+    "utf8",
+  );
 }
 
 app.get("/api/state", (req, res) => {
   const activeLocKey = systems.user.loc || "centre";
   const roomObj = systems.loc.list[activeLocKey];
 
+  let currentMonster = null;
+  try {
+    if (fs.existsSync(filePath)) {
+      const fileData = JSON.parse(fs.readFileSync(filePath, "utf8"));
+      currentMonster = fileData.activeMonster || null;
+    }
+  } catch (e) {
+    currentMonster = global.systemsEngine.actCom;
+  }
+
   res.json({
     user: systems.user,
-    actCom: global.systemsEngine.actCom,
+    actCom: currentMonster,
     currentRoom: roomObj || { name: activeLocKey, description: "Опасная зона" },
     logText: lastLogText,
   });
@@ -52,7 +66,31 @@ app.post("/api/command", (req, res) => {
   const rawInput = req.body.command || req.body.comand || req.body.textCommand;
 
   if (rawInput !== undefined && rawInput !== null) {
-    lastLogText = global.systemsEngine.comands(String(rawInput).trim());
+    const cleanCommand = String(rawInput)
+      .trim()
+      .toLowerCase();
+
+    try {
+      if (fs.existsSync(filePath)) {
+        const fileData = JSON.parse(fs.readFileSync(filePath, "utf8"));
+        if (fileData.activeMonster) {
+          global.systemsEngine.actCom = fileData.activeMonster;
+        }
+      }
+    } catch (e) {}
+
+    lastLogText = global.systemsEngine.comands(cleanCommand);
+
+    try {
+      let fileData = fs.existsSync(filePath)
+        ? JSON.parse(fs.readFileSync(filePath, "utf8"))
+        : {};
+      fileData.comand = "";
+      fileData.activeMonster = global.systemsEngine.actCom;
+      fs.writeFileSync(filePath, JSON.stringify(fileData, null, 2), "utf8");
+    } catch (e) {
+      console.error("Ошибка сохранения боя в data.json", e);
+    }
   }
 
   const activeLocKey = systems.user.loc || "centre";

@@ -57,10 +57,25 @@ const dvi = {
 
     if (fs.existsSync(dataJsonPath)) {
       try {
-        fs.writeFileSync(dataJsonPath, "{}");
+        let fileData = JSON.parse(fs.readFileSync(dataJsonPath, "utf8"));
+        fileData.comand = "";
+        fs.writeFileSync(
+          dataJsonPath,
+          JSON.stringify(fileData, null, 2),
+          "utf8",
+        );
       } catch (e) {
-        console.error("Ошибка очистки файла в {}", e);
+        try {
+          fs.writeFileSync(dataJsonPath, "{}");
+        } catch (err) {}
       }
+    }
+
+    if (dvi.actCom) {
+      if (command === "бой") {
+        return "ты уже в бою с " + dvi.actCom.name;
+      }
+      return dvi.battle(command);
     }
 
     if (command === "сохранить") {
@@ -96,13 +111,6 @@ const dvi = {
       }
       data.user["slot" + slotSep] = "null";
       return "предмет " + poti.name + " использован";
-    }
-
-    if (dvi.actCom) {
-      if (command === "бой") {
-        return "ты уже в бою с " + dvi.actCom.name;
-      }
-      return dvi.battle(command);
     }
 
     if (command.startsWith("говорить с ёриком") || command.startsWith("ёрик")) {
@@ -305,6 +313,13 @@ const dvi = {
       if (!dvi.actCom.MaxHp && dvi.actCom.maxHp) {
         dvi.actCom.MaxHp = dvi.actCom.maxHp;
       }
+      try {
+        fs.writeFileSync(
+          dataJsonPath,
+          JSON.stringify(fileData, null, 2),
+          "utf8",
+        );
+      } catch (e) {}
 
       return "бой начат с " + dvi.actCom.name;
     }
@@ -396,6 +411,10 @@ const dvi = {
         logBattle += "Вы нанесли " + enemy.name + " " + damage + " урона.\n";
       }
 
+      const fs = require("fs");
+      const path = require("path");
+      const dataJsonPath = path.resolve(__dirname, "../bin/data.json");
+
       if (enemy.hp <= 0) {
         data.user.xp += enemy.xpDrop;
         data.user.gold += 10;
@@ -432,6 +451,20 @@ const dvi = {
 
         data.actCom = null;
         dvi.loading(dvi.currentSlot);
+
+        try {
+          let fileData = fs.existsSync(dataJsonPath)
+            ? JSON.parse(fs.readFileSync(dataJsonPath, "utf8"))
+            : {};
+          fileData.comand = "";
+          fileData.activeMonster = null;
+          fs.writeFileSync(
+            dataJsonPath,
+            JSON.stringify(fileData, null, 2),
+            "utf8",
+          );
+        } catch (e) {}
+
         return logBattle + "Монстр " + enemy.name + " повержен!" + dropText;
       }
 
@@ -456,8 +489,33 @@ const dvi = {
         data.user.hp = data.user.MaxHp;
         data.user.loc = "centre";
         dvi.loading(dvi.currentSlot);
+        try {
+          let fileData = fs.existsSync(dataJsonPath)
+            ? JSON.parse(fs.readFileSync(dataJsonPath, "utf8"))
+            : {};
+          fileData.comand = "";
+          fileData.activeMonster = null;
+          fs.writeFileSync(
+            dataJsonPath,
+            JSON.stringify(fileData, null, 2),
+            "utf8",
+          );
+        } catch (e) {}
         return logBattle + "Вы погибли в бою!";
       }
+
+      try {
+        let fileData = fs.existsSync(dataJsonPath)
+          ? JSON.parse(fs.readFileSync(dataJsonPath, "utf8"))
+          : {};
+        fileData.comand = "";
+        fileData.activeMonster = dvi.actCom;
+        fs.writeFileSync(
+          dataJsonPath,
+          JSON.stringify(fileData, null, 2),
+          "utf8",
+        );
+      } catch (e) {}
 
       return (
         logBattle +
